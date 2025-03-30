@@ -28,7 +28,7 @@ export const WalletConnectionStatus: React.FC = () => {
         return (
             <div className="space-y-2">
                 {connectors.map((connector) => (
-                    <Button
+                    <Button className="m-2"
                         key={connector.uid}
                         onClick={() => connect({connector})}
                     >
