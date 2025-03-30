@@ -10,12 +10,14 @@ import {useChainId} from 'wagmi';
 import {EnsureNetwork} from '@/components/EnsureNetwork.tsx';
 import {RecipientSelector} from '@/components/RecipientSelector.tsx';
 import {EspressoConfirmation} from '@/components/EspressoConfirmation.tsx';
+import {useEspressoTracker} from '@/hooks/EspressoTrackerContext.tsx';
 
 export const TransferL3: React.FC = () => {
     const chainId = useChainId()
     const {address, l3} = useDemo()
     const {l3Balance} = useBalances()
     const signer = useEthersSigner({chainId: l3?.id})
+    const {startTracking} = useEspressoTracker()
 
     const [recipient, setRecipient] = useState('')
     const [amount, setAmount] = useState('')
@@ -26,7 +28,7 @@ export const TransferL3: React.FC = () => {
     const maxSendable = Math.max(balanceEth - 0.0001, 0).toFixed(6)
 
     const handleTransfer = async () => {
-        if (!signer || !address || !recipient || !amount) return
+        if (!signer || !address || !recipient || !amount || !l3) return
 
         const value = ethers.utils.parseEther(amount)
 
@@ -44,6 +46,7 @@ export const TransferL3: React.FC = () => {
             })
 
             setTxHash(tx.hash)
+            startTracking(tx.hash, l3.id)
             await tx.wait()
             setState('success')
         } catch (err) {

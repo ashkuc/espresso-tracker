@@ -10,6 +10,7 @@ import {config} from './wagmi.ts'
 import './index.css'
 import {DemoProvider} from '@/hooks/DemoContext.tsx';
 import {BalancesProvider} from '@/hooks/BalancesContext.tsx';
+import {EspressoTrackerProvider} from '@/hooks/EspressoTrackerContext.tsx';
 
 globalThis.Buffer = Buffer
 
@@ -21,7 +22,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <QueryClientProvider client={queryClient}>
                 <DemoProvider>
                     <BalancesProvider>
-                        <App/>
+                        <EspressoTrackerProvider>
+                            <App/>
+                        </EspressoTrackerProvider>
                     </BalancesProvider>
                 </DemoProvider>
             </QueryClientProvider>

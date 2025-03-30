@@ -24,13 +24,14 @@ export const pollEspresso = async ({
                                    }: PollParams): Promise<bigint | null> => {
     const api = new EspressoApi(apiUrl)
 
-    const headBlock = await api.getStatusBlockHeight()
-    const fromBlock = headBlock - BigInt(previousBlocksCount)
+    const headAtStart = await api.getStatusBlockHeight()
+    const startFromBlock = headAtStart - BigInt(previousBlocksCount)
+    const maxTargetBlock = startFromBlock + BigInt(maxBlocksCount)
 
-    let lastProcessedBlock = fromBlock
-    let currentHead = headBlock
+    let lastProcessedBlock = startFromBlock
 
     while (true) {
+        let currentHead: bigint
         try {
             currentHead = await api.getStatusBlockHeight()
         } catch (err) {
@@ -39,12 +40,10 @@ export const pollEspresso = async ({
             continue
         }
 
-        const maxTarget = fromBlock + BigInt(maxBlocksCount)
-        const toBlock = currentHead < maxTarget ? currentHead : maxTarget
-
-        if (lastProcessedBlock > toBlock) {
-            await sleep(pollingInterval)
-            continue
+        const toBlock = currentHead - 1n
+        if (toBlock > maxTargetBlock) {
+            console.warn('🚫 Reached maxTargetBlock limit')
+            return null
         }
 
         for (
@@ -69,7 +68,7 @@ export const pollEspresso = async ({
                 }
             } catch (err) {
                 console.error(`⚠️ Error polling block ${blockHeight}:`, err)
-                break
+                break // не двигаем lastProcessedBlock, повторим на следующем тике
             }
 
             lastProcessedBlock = blockHeight + 1n
