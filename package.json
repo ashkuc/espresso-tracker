@@ -39,5 +39,6 @@
     "buffer": "^6.0.3",
     "typescript": "^5.4.5",
     "vite": "^5.2.11"
-  }
+  },
+  "packageManager": "yarn@4.4.1"
 }
