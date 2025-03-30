@@ -1,7 +1,7 @@
-import {EspressoApi} from '@/lib/espresso-utils/api.ts';
-import {decodeEspressoTransaction} from '@/lib/espresso-utils/decoder.ts';
+import { EspressoApi } from '@/lib/espresso-utils/api'
+import { decodeEspressoTransaction } from '@/lib/espresso-utils/decoder'
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 type PollParams = {
     txHash: string
@@ -14,28 +14,50 @@ type PollParams = {
 }
 
 export const pollEspresso = async ({
-                                         txHash,
-                                         namespace,
-                                         apiUrl,
-                                         maxBlocksCount,
-                                         previousBlocksCount,
-                                         pollingInterval,
-                                         onBlock,
-                                     }: PollParams): Promise<bigint | null> => {
+                                       txHash,
+                                       namespace,
+                                       apiUrl,
+                                       maxBlocksCount,
+                                       previousBlocksCount,
+                                       pollingInterval,
+                                       onBlock,
+                                   }: PollParams): Promise<bigint | null> => {
     const api = new EspressoApi(apiUrl)
 
-    const startFromBlock = await api
-        .getStatusBlockHeight()
-        .then((b) => b - BigInt(previousBlocksCount))
+    const headBlock = await api.getStatusBlockHeight()
+    const fromBlock = headBlock - BigInt(previousBlocksCount)
 
-    let blockHeight = startFromBlock
+    let lastProcessedBlock = fromBlock
+    let currentHead = headBlock
 
-    while (blockHeight <= startFromBlock + BigInt(maxBlocksCount)) {
+    while (true) {
         try {
-            const response = await api.getTransactionsWithProof(blockHeight, namespace)
-            onBlock?.(blockHeight)
+            currentHead = await api.getStatusBlockHeight()
+        } catch (err) {
+            console.error('❌ Failed to fetch head block:', err)
+            await sleep(pollingInterval)
+            continue
+        }
 
-            if (response.transactions?.length) {
+        const maxTarget = fromBlock + BigInt(maxBlocksCount)
+        const toBlock = currentHead < maxTarget ? currentHead : maxTarget
+
+        if (lastProcessedBlock > toBlock) {
+            await sleep(pollingInterval)
+            continue
+        }
+
+        for (
+            let blockHeight = lastProcessedBlock;
+            blockHeight <= toBlock;
+            blockHeight++
+        ) {
+            try {
+                const response = await api.getTransactionsWithProof(blockHeight, namespace)
+                onBlock?.(blockHeight)
+
+                if (!response.transactions?.length) continue
+
                 for (const transaction of response.transactions) {
                     const decoded = await decodeEspressoTransaction(transaction.payload)
 
@@ -45,14 +67,14 @@ export const pollEspresso = async ({
                         }
                     }
                 }
+            } catch (err) {
+                console.error(`⚠️ Error polling block ${blockHeight}:`, err)
+                break
             }
-        } catch (err) {
-            console.error(`Error polling block ${blockHeight}:`, err)
+
+            lastProcessedBlock = blockHeight + 1n
         }
 
-        blockHeight += 1n
         await sleep(pollingInterval)
     }
-
-    return null
 }

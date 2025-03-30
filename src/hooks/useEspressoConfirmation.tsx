@@ -1,5 +1,6 @@
 import {useEffect, useState, useRef} from 'react'
 import {getEspressoApiUrl} from '@/chains';
+import {pollEspresso} from '@/lib/espresso-utils/poll'
 
 const STEP_BACK_FROM_HEADER = 10
 
@@ -10,7 +11,6 @@ type UseEspressoConfirmationArgs = {
     maxBlocksCount?: number
     previousBlocksCount?: number
 }
-import { pollEspresso } from '@/lib/espresso-utils/poll'
 
 export const useEspressoConfirmation = ({
                                             txHash,

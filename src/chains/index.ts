@@ -19,11 +19,23 @@ export const availableOptions: Array<RollupChains> = [ashkucRollupConfig]
 export const ESPRESSO_MAIN_API_URL = 'https://query.main.net.espresso.network';
 export const ESPRESSO_TESTNET_API_URL = 'https://query.decaf.testnet.espresso.network';
 
+export const ESPRESSO_MAIN_BLOCK_EXPLORER_URL = 'https://explorer.main.net.espresso.network';
+export const ESPRESSO_TESTNET_BLOCK_EXPLORER_URL = 'https://explorer.decaf.testnet.espresso.network';
+
 export const getEspressoApiUrl = (chainId: string | number): string => {
     switch (chainId.toString()) {
         case ashkucTestnet.id.toString():
             return ESPRESSO_TESTNET_API_URL;
         default:
-            throw new Error(`Unsupported chain ID: ${chainId}`);
+            return ''
+    }
+}
+
+export const getEspressoBlockExplorerUrl = (chainId: string | number): string => {
+    switch (chainId.toString()) {
+        case ashkucTestnet.id.toString():
+            return ESPRESSO_TESTNET_BLOCK_EXPLORER_URL;
+        default:
+            return ''
     }
 }

@@ -1,13 +1,14 @@
-import React from 'react'
-import { useEspressoConfirmation } from '@/hooks/useEspressoConfirmation'
-import { useDemo } from '@/hooks/DemoContext'
+import React, {useMemo} from 'react'
+import {useEspressoConfirmation} from '@/hooks/useEspressoConfirmation'
+import {useDemo} from '@/hooks/DemoContext'
+import {getEspressoBlockExplorerUrl} from '@/chains';
 
 type EspressoConfirmationProps = {
     txHash?: string
 }
 
-export const EspressoConfirmation: React.FC<EspressoConfirmationProps> = ({ txHash }) => {
-    const { l3 } = useDemo()
+export const EspressoConfirmation: React.FC<EspressoConfirmationProps> = ({txHash}) => {
+    const {l3} = useDemo()
 
     const {
         isConfirmed,
@@ -19,6 +20,10 @@ export const EspressoConfirmation: React.FC<EspressoConfirmationProps> = ({ txHa
         txHash: txHash || '',
         namespace: l3?.id ?? 0,
     })
+
+    const blockExplorerUrl = useMemo(() => {
+        return !l3 ? '' : getEspressoBlockExplorerUrl(l3.id);
+    }, [l3])
 
     if (!txHash) return null
 
@@ -45,6 +50,19 @@ export const EspressoConfirmation: React.FC<EspressoConfirmationProps> = ({ txHa
             {isConfirmed && (
                 <div className="text-green-600">
                     ✅ Confirmed in block {confirmedBlock?.toString()}
+                </div>
+            )}
+
+            {isConfirmed && !!confirmedBlock && blockExplorerUrl && (
+                <div className="text-sm text-muted-foreground">
+                    <a
+                        href={`${blockExplorerUrl}/block/${confirmedBlock}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:underline"
+                    >
+                        View on block explorer
+                    </a>
                 </div>
             )}
 
