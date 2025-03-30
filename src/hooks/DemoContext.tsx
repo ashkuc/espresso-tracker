@@ -1,21 +1,17 @@
 import { createContext, useContext, useState, ReactNode } from 'react'
+import {Chain} from 'viem';
 
 type DemoContextType = {
     isConnected: boolean
     address?: string
-    l2Balance?: bigint
-    l3Balance?: bigint
-    depositTxHash?: string
-    transferTxHash?: string
-    isConfirmed?: boolean
-
+    l1?: Chain
+    l2?: Chain
+    l3?: Chain
     setConnected: (val: boolean) => void
     setAddress: (addr: string) => void
-    setL2Balance: (b: bigint) => void
-    setL3Balance: (b: bigint) => void
-    setDepositTxHash: (h: string) => void
-    setTransferTxHash: (h: string) => void
-    setConfirmed: (v: boolean) => void
+    setL1: (chain: Chain) => void
+    setL2: (chain: Chain) => void
+    setL3: (chain: Chain) => void
 }
 
 const DemoContext = createContext<DemoContextType | null>(null)
@@ -29,29 +25,23 @@ export const useDemo = () => {
 export const DemoProvider = ({ children }: { children: ReactNode }) => {
     const [isConnected, setConnected] = useState(false)
     const [address, setAddress] = useState<string>()
-    const [l2Balance, setL2Balance] = useState<bigint>()
-    const [l3Balance, setL3Balance] = useState<bigint>()
-    const [depositTxHash, setDepositTxHash] = useState<string>()
-    const [transferTxHash, setTransferTxHash] = useState<string>()
-    const [isConfirmed, setConfirmed] = useState<boolean>()
+    const [l1, setL1] = useState<Chain>()
+    const [l2, setL2] = useState<Chain>()
+    const [l3, setL3] = useState<Chain>()
 
     return (
         <DemoContext.Provider
             value={{
                 isConnected,
                 address,
-                l2Balance,
-                l3Balance,
-                depositTxHash,
-                transferTxHash,
-                isConfirmed,
+                l1,
+                l2,
+                l3,
                 setConnected,
                 setAddress,
-                setL2Balance,
-                setL3Balance,
-                setDepositTxHash,
-                setTransferTxHash,
-                setConfirmed,
+                setL1,
+                setL2,
+                setL3,
             }}
         >
             {children}

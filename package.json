@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@arbitrum/sdk": "^4.0.3",
+    "@radix-ui/react-label": "^2.1.2",
+    "@radix-ui/react-select": "^2.1.6",
     "@radix-ui/react-separator": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.2",
     "@tailwindcss/vite": "^4.0.17",
@@ -19,6 +22,7 @@
     "lucide-react": "^0.485.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "rlp": "^3.0.0",
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.0.17",
     "tw-animate-css": "^1.2.5",
