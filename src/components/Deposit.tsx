@@ -4,9 +4,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useEthersProvider, useEthersSigner } from '@/hooks/useEthers'
-import { EthBridger } from '@arbitrum/sdk'
+import {EthBridger, registerCustomArbitrumNetwork} from '@arbitrum/sdk'
 import { ethers } from 'ethers'
-import {registerInArbitrumSdk} from '@/chains/ashkucTestnet.ts';
+import {ashkucTestnetArbitrumNetwork} from '@/chains/ashkucTestnet';
+import {ashkucMainnetArbitrumNetwork} from '@/chains/ashkucMainnet';
 import {useChainId} from 'wagmi';
 import {EnsureNetwork} from '@/components/EnsureNetwork.tsx';
 
@@ -21,7 +22,8 @@ export const DepositL2L3: React.FC = () => {
     const parentSigner = useEthersSigner({ chainId: l2?.id })
 
     useEffect(() => {
-        registerInArbitrumSdk()
+        registerCustomArbitrumNetwork(ashkucTestnetArbitrumNetwork)
+        registerCustomArbitrumNetwork(ashkucMainnetArbitrumNetwork)
         console.log('registerInArbitrumSdk')
     }, []);
 
