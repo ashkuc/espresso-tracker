@@ -1,6 +1,6 @@
 import { Chain } from 'viem'
 
-import { registerCustomArbitrumNetwork } from '@arbitrum/sdk'
+import {ArbitrumNetwork} from '@arbitrum/sdk'
 import {arbitrumSepolia} from 'wagmi/chains';
 
 export const ashkucTestnet = {
@@ -17,8 +17,7 @@ export const ashkucTestnet = {
     },
 } as const satisfies Chain
 
-
-export const registerInArbitrumSdk = () => registerCustomArbitrumNetwork({
+export const ashkucTestnetArbitrumNetwork: ArbitrumNetwork = {
     isCustom: true,
     isTestnet: true,
     chainId: ashkucTestnet.id,
@@ -32,5 +31,4 @@ export const registerInArbitrumSdk = () => registerCustomArbitrumNetwork({
     },
     parentChainId: arbitrumSepolia.id,
     confirmPeriodBlocks: 1,
-}, {throwIfAlreadyRegistered: false})
-
+}

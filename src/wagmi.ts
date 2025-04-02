@@ -2,6 +2,7 @@ import {http, createConfig} from 'wagmi'
 import {mainnet, sepolia, arbitrum, arbitrumSepolia} from 'wagmi/chains'
 import {injected} from 'wagmi/connectors'
 import {ashkucTestnet} from './chains/ashkucTestnet';
+import {ashkucMainnet} from './chains/ashkucMainnet.ts';
 
 export const config = createConfig({
     chains: [
@@ -10,6 +11,7 @@ export const config = createConfig({
         sepolia,
         arbitrumSepolia,
         ashkucTestnet,
+        ashkucMainnet,
     ],
     connectors: [
         injected(),
@@ -22,6 +24,7 @@ export const config = createConfig({
         [sepolia.id]: http(),
         [arbitrumSepolia.id]: http(),
         [ashkucTestnet.id]: http(),
+        [ashkucMainnet.id]: http(),
     },
 })
 
